@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydantic
+requests
+chromadb
+python-multipart
+beautifulsoup4
+lxml
