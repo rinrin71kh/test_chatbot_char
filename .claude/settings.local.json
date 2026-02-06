@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "WebSearch",
+      "WebFetch(domain:allthetropes.org)",
+      "WebFetch(domain:archiveofourown.gay)",
+      "Bash(dir:*)",
+      "WebFetch(domain:hanime.tv)"
+    ]
+  }
+}
