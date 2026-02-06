@@ -6,3 +6,7 @@ chromadb
 python-multipart
 beautifulsoup4
 lxml
+PyPDF2
+youtube-transcript-api
+openai-whisper
+yt-dlp
