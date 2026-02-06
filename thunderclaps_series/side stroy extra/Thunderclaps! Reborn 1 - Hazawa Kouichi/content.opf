@@ -1,0 +1,46 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata">
+    <dc:title>Thunderclaps! Reborn 1: Parasite Crisis</dc:title>
+    <dc:creator opf:role="aut" opf:file-as="Hazawa, Kouichi">Hazawa Kouichi</dc:creator>
+    <dc:contributor opf:role="bkp">calibre (7.2.0) [https://calibre-ebook.com]</dc:contributor>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">a21d4928-af86-4482-8ab9-7caf5a2dc411</dc:identifier>
+    <dc:date>0101-01-01T00:00:00+00:00</dc:date>
+    <dc:language>en</dc:language>
+    <dc:identifier opf:scheme="calibre">a21d4928-af86-4482-8ab9-7caf5a2dc411</dc:identifier>
+    <meta name="calibre:timestamp" content="2024-01-01T04:00:12+00:00"/>
+    <meta name="calibre:title_sort" content="Thunderclaps! Reborn 1: Parasite Crisis"/>
+    <meta name="calibre:series" content="Thunderclaps"/>
+    <meta name="calibre:series_index" content="5.0"/>
+    <meta name="cover" content="cover"/>
+  </metadata>
+  <manifest>
+    <item id="titlepage" href="titlepage.xhtml" media-type="application/xhtml+xml"/>
+    <item id="id25" href="index_split_000.html" media-type="application/xhtml+xml"/>
+    <item id="id24" href="index_split_001.html" media-type="application/xhtml+xml"/>
+    <item id="id23" href="index_split_002.html" media-type="application/xhtml+xml"/>
+    <item id="id22" href="index_split_003.html" media-type="application/xhtml+xml"/>
+    <item id="id21" href="index_split_004.html" media-type="application/xhtml+xml"/>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+    <item id="page_css" href="page_styles.css" media-type="text/css"/>
+    <item id="css" href="stylesheet.css" media-type="text/css"/>
+    <item id="cover" href="cover.jpeg" media-type="image/jpeg"/>
+    <item id="id3" href="images/image-1.png" media-type="image/png"/>
+    <item id="id4" href="images/image-2.png" media-type="image/png"/>
+    <item id="id5" href="images/image-3.png" media-type="image/png"/>
+    <item id="id6" href="images/image-4.png" media-type="image/png"/>
+    <item id="id7" href="images/image-5.png" media-type="image/png"/>
+    <item id="id8" href="images/image.png" media-type="image/png"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="id25"/>
+    <itemref idref="id24"/>
+    <itemref idref="id23"/>
+    <itemref idref="id22"/>
+    <itemref idref="id21"/>
+  </spine>
+  <guide>
+    <reference type="cover" href="titlepage.xhtml" title="Cover"/>
+  </guide>
+</package>
