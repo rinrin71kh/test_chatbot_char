@@ -1,9 +1,20 @@
 import { ref, computed } from "vue";
 
-export const API = "http://127.0.0.1:8001";
+export const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8001";
 
 // ---- App state ----
 export const currentView = ref<"dashboard" | "chat" | "lorebook">("dashboard");
+
+// ---- NSFW Mode (unlocked via #/18 in URL) ----
+export const nsfwMode = ref(false);
+
+export function initNsfwMode() {
+  const hash = window.location.hash;
+  nsfwMode.value = hash.includes("/18");
+  window.addEventListener("hashchange", () => {
+    nsfwMode.value = window.location.hash.includes("/18");
+  });
+}
 
 // ---- Character state ----
 export const characters = ref<any[]>([]);
@@ -36,6 +47,7 @@ export const personaForm = ref({
   appearance: "",
   personality: "",
   avatar_emoji: "🧑",
+  avatar_image: "",
 });
 export const editingPersonaId = ref<string | null>(null);
 
@@ -199,6 +211,10 @@ export const charactersBySeries = computed(() => {
 
 export const filteredCharacters = computed(() => {
   let list = characters.value;
+  // In SFW mode, hide characters tagged "nsfw"
+  if (!nsfwMode.value) {
+    list = list.filter((c: any) => !(c.tags || []).includes("nsfw"));
+  }
   if (activeTags.value.length > 0) {
     list = list.filter((c: any) =>
       (c.tags || []).some((t: string) => activeTags.value.includes(t))

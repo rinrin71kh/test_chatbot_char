@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import {
   showPersonaModal,
   personas,
@@ -6,6 +7,7 @@ import {
   personaForm,
   editingPersonaId,
   EMOJI_OPTIONS,
+  API,
 } from "../store";
 import { usePersona } from "../composables/usePersona";
 
@@ -16,6 +18,44 @@ const {
   setActivePersona,
   cancelEditing,
 } = usePersona();
+
+const avatarMode = ref<"emoji" | "image">("emoji");
+const personaImages = ref<{ url: string; filename: string; category: string }[]>([]);
+const imagesLoading = ref(false);
+
+async function loadPersonaImages() {
+  if (personaImages.value.length > 0) return;
+  imagesLoading.value = true;
+  try {
+    const r = await fetch(`${API}/persona-images`);
+    const data = await r.json();
+    personaImages.value = data.images || [];
+  } catch (e) {
+    console.error("Failed to load persona images:", e);
+  } finally {
+    imagesLoading.value = false;
+  }
+}
+
+function selectImage(url: string) {
+  personaForm.value.avatar_image = url;
+  personaForm.value.avatar_emoji = "";
+}
+
+function selectEmoji(e: string) {
+  personaForm.value.avatar_emoji = e;
+  personaForm.value.avatar_image = "";
+}
+
+function switchToImages() {
+  avatarMode.value = "image";
+  loadPersonaImages();
+}
+
+function getPersonaAvatarDisplay(p: any): { type: "emoji" | "image"; value: string } {
+  if (p.avatar_image) return { type: "image", value: p.avatar_image.startsWith("/") ? `${API}${p.avatar_image}` : p.avatar_image };
+  return { type: "emoji", value: p.avatar_emoji || "🧑" };
+}
 </script>
 
 <template>
@@ -42,7 +82,10 @@ const {
             :class="{ active: p.id === activePersonaId }"
             @click="setActivePersona(p.id)"
           >
-            <div class="persona-card-emoji">{{ p.avatar_emoji }}</div>
+            <div v-if="getPersonaAvatarDisplay(p).type === 'image'" class="persona-card-avatar-img">
+              <img :src="getPersonaAvatarDisplay(p).value" @error="($event.target as HTMLImageElement).style.display = 'none'" />
+            </div>
+            <div v-else class="persona-card-emoji">{{ getPersonaAvatarDisplay(p).value }}</div>
             <div class="persona-card-info">
               <div class="persona-card-name">{{ p.name }}</div>
               <div class="persona-card-meta">
@@ -125,16 +168,50 @@ const {
           ></textarea>
 
           <label class="form-label">Avatar</label>
-          <div class="emoji-picker">
+          <div class="avatar-tabs">
+            <button
+              class="avatar-tab"
+              :class="{ active: avatarMode === 'emoji' }"
+              @click="avatarMode = 'emoji'"
+            >Emoji</button>
+            <button
+              class="avatar-tab"
+              :class="{ active: avatarMode === 'image' }"
+              @click="switchToImages()"
+            >Images</button>
+          </div>
+
+          <!-- Emoji picker -->
+          <div v-if="avatarMode === 'emoji'" class="emoji-picker">
             <button
               v-for="e in EMOJI_OPTIONS"
               :key="e"
               class="emoji-option"
-              :class="{ active: personaForm.avatar_emoji === e }"
-              @click="personaForm.avatar_emoji = e"
+              :class="{ active: personaForm.avatar_emoji === e && !personaForm.avatar_image }"
+              @click="selectEmoji(e)"
             >
               {{ e }}
             </button>
+          </div>
+
+          <!-- Image picker -->
+          <div v-else class="image-picker">
+            <div v-if="imagesLoading" class="image-picker-loading">Loading images...</div>
+            <div v-else-if="personaImages.length === 0" class="image-picker-empty">
+              No images available yet. Run dataset ingestion first.
+            </div>
+            <div v-else class="image-grid">
+              <button
+                v-for="img in personaImages"
+                :key="img.url"
+                class="image-option"
+                :class="{ active: personaForm.avatar_image === img.url }"
+                @click="selectImage(img.url)"
+                :title="img.category + ' — ' + img.filename"
+              >
+                <img :src="API + img.url" @error="($event.target as HTMLImageElement).parentElement!.style.display = 'none'" />
+              </button>
+            </div>
           </div>
 
           <div class="persona-form-actions">
@@ -426,10 +503,103 @@ const {
   border-color: #8b5cf6;
 }
 
+.persona-card-avatar-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #1a1a24;
+}
+
+.persona-card-avatar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.avatar-tab {
+  flex: 1;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #2a2a3a;
+  background: #1a1a24;
+  color: #8b8b9f;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-align: center;
+}
+
+.avatar-tab:hover {
+  background: #2a2a3a;
+  color: #e4e4eb;
+}
+
+.avatar-tab.active {
+  background: linear-gradient(135deg, #6d28d9, #4c1d95);
+  color: white;
+  border-color: #8b5cf6;
+}
+
 .emoji-picker {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.image-picker {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.image-picker-loading,
+.image-picker-empty {
+  text-align: center;
+  color: #6b6b80;
+  padding: 20px;
+  font-size: 13px;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 6px;
+}
+
+.image-option {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 2px solid #2a2a3a;
+  background: #1a1a24;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.image-option:hover {
+  border-color: #4a4a5a;
+  transform: scale(1.05);
+}
+
+.image-option.active {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+}
+
+.image-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .emoji-option {

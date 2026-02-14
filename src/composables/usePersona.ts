@@ -36,6 +36,7 @@ export function usePersona() {
       appearance: "",
       personality: "",
       avatar_emoji: "🧑",
+      avatar_image: "",
     };
   }
 
@@ -75,6 +76,7 @@ export function usePersona() {
       appearance: "",
       personality: "",
       avatar_emoji: "🧑",
+      avatar_image: "",
     };
   }
 
@@ -123,6 +125,7 @@ export function usePersona() {
       appearance: "",
       personality: "",
       avatar_emoji: "🧑",
+      avatar_image: "",
     };
   }
 

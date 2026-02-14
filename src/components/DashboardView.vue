@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import {
   searchQuery,
   allTags,
@@ -6,6 +6,8 @@ import {
   filteredCharacters,
   activePersona,
   currentView,
+  nsfwMode,
+  API,
 } from "../store";
 import { useCharacters } from "../composables/useCharacters";
 import { usePersona } from "../composables/usePersona";
@@ -17,27 +19,36 @@ const { openPersonaModal } = usePersona();
 function openLorebook() {
   currentView.value = "lorebook";
 }
+
+function getPersonaAvatar(): { type: "emoji" | "image"; value: string } | null {
+  const p = activePersona.value;
+  if (!p) return null;
+  if (p.avatar_image) return { type: "image", value: p.avatar_image.startsWith("/") ? `${API}${p.avatar_image}` : p.avatar_image };
+  return { type: "emoji", value: p.avatar_emoji || "👤" };
+}
 </script>
 
 <template>
   <div class="dashboard">
     <header class="dash-header">
       <div class="dash-header-top">
+        <div class="header-spacer"></div>
         <div class="logo">
-          <div class="logo-icon">NF</div>
-          <span>NoFilter Chat</span>
+          <div class="logo-icon" :class="{ nsfw: nsfwMode }">{{ nsfwMode ? 'NF' : 'DR' }}</div>
+          <span>{{ nsfwMode ? 'NoFilter Chat' : 'DramaRealm' }}</span>
         </div>
         <div class="header-actions">
           <button
-            class="persona-btn"
+            v-if="nsfwMode"
+            class="action-btn"
             @click="openLorebook"
             title="Browse lorebook"
           >
-            <span class="persona-btn-emoji">&#128218;</span>
-            <span class="persona-btn-name">Lorebook</span>
+            <span class="action-btn-emoji">&#128218;</span>
+            <span class="action-btn-label">Lorebook</span>
           </button>
           <button
-            class="persona-btn"
+            class="action-btn"
             @click="openPersonaModal"
             :title="
               activePersona
@@ -45,17 +56,21 @@ function openLorebook() {
                 : 'Set up your persona'
             "
           >
-            <span class="persona-btn-emoji">{{
-              activePersona ? activePersona.avatar_emoji : "👤"
+            <img
+              v-if="getPersonaAvatar()?.type === 'image'"
+              :src="getPersonaAvatar()!.value"
+              class="action-btn-avatar"
+            />
+            <span v-else class="action-btn-emoji">{{
+              getPersonaAvatar()?.value || "👤"
             }}</span>
-            <span v-if="activePersona" class="persona-btn-name">{{
-              activePersona.name
+            <span class="action-btn-label">{{
+              activePersona ? activePersona.name : "Persona"
             }}</span>
-            <span v-else class="persona-btn-name">Persona</span>
           </button>
         </div>
       </div>
-      <div class="dash-subtitle">Choose a character to begin your story</div>
+      <div class="dash-subtitle">{{ nsfwMode ? 'Choose a character to begin your story' : 'Choose a character for your drama' }}</div>
     </header>
 
     <!-- Search bar -->
@@ -175,13 +190,17 @@ function openLorebook() {
 .logo-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 14px;
+}
+
+.logo-icon.nsfw {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
 }
 
 .logo span {
@@ -192,45 +211,75 @@ function openLorebook() {
 .dash-header-top {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1100px;
   margin-bottom: 12px;
-  position: relative;
+}
+
+.header-spacer {
+  width: 220px;
+  flex-shrink: 0;
 }
 
 .header-actions {
   display: flex;
   gap: 8px;
-  position: absolute;
-  right: 0;
+  width: 220px;
+  flex-shrink: 0;
+  justify-content: flex-end;
 }
 
-.persona-btn {
+.action-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 8px 14px;
   background: #1a1a24;
   border: 1px solid #2a2a3a;
   border-radius: 10px;
   color: #c4c4d4;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   transition: all 0.2s;
   font-family: inherit;
+  white-space: nowrap;
 }
 
-.persona-btn:hover {
+.action-btn:hover {
   background: #2a2a3a;
   border-color: #8b5cf6;
 }
 
-.persona-btn-emoji {
-  font-size: 20px;
+.action-btn-emoji {
+  font-size: 18px;
 }
 
-.persona-btn-name {
+.action-btn-label {
   font-weight: 500;
+}
+
+.action-btn-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .dash-header-top {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .header-spacer {
+    display: none;
+  }
+  .header-actions {
+    width: auto;
+    justify-content: center;
+    order: 3;
+  }
 }
 
 /* Search bar */

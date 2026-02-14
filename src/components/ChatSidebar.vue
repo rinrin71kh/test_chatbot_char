@@ -7,6 +7,7 @@ import {
   sessionList,
   activePersona,
   currentView,
+  nsfwMode,
 } from "../store";
 import { useCharacters } from "../composables/useCharacters";
 import { useChat } from "../composables/useChat";
@@ -65,7 +66,7 @@ async function handleIngestUrl() {
         </svg>
         Dashboard
       </button>
-      <button class="btn btn-back btn-lorebook" @click="currentView = 'lorebook'">
+      <button v-if="nsfwMode" class="btn btn-back btn-lorebook" @click="currentView = 'lorebook'">
         &#128218; Lorebook
       </button>
     </div>

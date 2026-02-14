@@ -6,6 +6,7 @@ import {
   characterId,
   sessionId,
   msgs,
+  initNsfwMode,
 } from "./store";
 import { useCharacters } from "./composables/useCharacters";
 import { useChat } from "./composables/useChat";
@@ -24,6 +25,7 @@ const { getStoredSession, loadSessionList } = useSessions();
 
 // ---- Startup ----
 onMounted(async () => {
+  initNsfwMode();
   loadPersonas();
   await Promise.all([loadCharacters(), loadTags()]);
 
