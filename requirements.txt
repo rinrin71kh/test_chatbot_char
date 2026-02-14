@@ -10,3 +10,6 @@ PyPDF2
 youtube-transcript-api
 openai-whisper
 yt-dlp
+python-dotenv
+numpy
+datasets
