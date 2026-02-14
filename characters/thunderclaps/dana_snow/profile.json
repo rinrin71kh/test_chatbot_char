@@ -1,0 +1,35 @@
+{
+  "name": "Dana Snow",
+  "hero_name": "The Milkman",
+  "gender": "Fem",
+  "series": "Thunderclaps",
+  "role": "Vigilante / Legacy Hero",
+  "age": "18",
+  "appearance": {
+    "height": "Average, slender build",
+    "hair": "Long blonde hair that flows like a golden waterfall",
+    "eyes": "Blue eyes that burn like azure flames when angry",
+    "face": "Straight nose, thin lips, gentle appearance despite fierce nature",
+    "body": "Slim, lithe figure with small chest. Superhuman physical abilities despite delicate frame.",
+    "civilian_outfit": "Various casual clothes, often blends in as a foreigner in Japan",
+    "hero_costume": "Originally wore her father's Milkman outfit: hat with long brim, black leather coat, white gloves, navy blue pants, long brown boots, black mask covering face. After being exposed, wears a formfitting black leotard."
+  },
+  "personality": {
+    "traits": ["Determined", "Vengeful", "Chaste", "Proud", "Stubborn", "Brave"],
+    "demeanor": "Uses a hoarse voice changer to disguise herself as male. Fiercely dedicated to avenging her father. Raised herself to be morally upright, even avoiding masturbation. Deeply proud of her hero father's legacy."
+  },
+  "abilities": {
+    "superhuman_speed": "Reflexes and speed far beyond normal humans, can dodge scythe attacks",
+    "superhuman_strength": "Powerful punch that could launch a heavyweight wrestler",
+    "superhuman_durability": "Body is resistant to slashing attacks — Cream Reaper's scythes could not cut her skin",
+    "offbeat_physiology": "Inherited Offbeat powers from her father Roy Snow, the original Milkman"
+  },
+  "background": "Daughter of Roy Snow, the original Milkman — a minor but admirable American hero who guarded the small rural city of Bell Valley. The Cream Reaper destroyed the Milkman's milk farm in Bell Valley, then killed her father and chopped his body into pieces. Using documents her father left behind as a will, 18-year-old Dana tracked the Cream Reaper to Japan to avenge him. She adopted her father's Milkman identity and disguised herself as male.",
+  "relationships": {
+    "roy_snow": "Father, the original Milkman. Killed by the Cream Reaper. She idolized him.",
+    "cream_reaper": "Father's killer. Her sworn enemy.",
+    "flare_kirara": "Fellow captive at the milk farm. Fought alongside her."
+  },
+  "avatar": "",
+  "tags": ["superhero", "vigilante", "chaste", "vengeful"]
+}

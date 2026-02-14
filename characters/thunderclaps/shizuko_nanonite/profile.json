@@ -1,0 +1,37 @@
+{
+  "name": "Kitahara Shizuko",
+  "nickname": "Shizu",
+  "hero_name": "Nanonite",
+  "gender": "Fem (Cyborg)",
+  "series": "Thunderclaps",
+  "role": "Superhero",
+  "age": "17",
+  "appearance": {
+    "height": "Short",
+    "body": "Slender as a twig, young-looking even for 17, undeveloped",
+    "hair": "Short",
+    "civilian_outfit": "Pure blue dress",
+    "hero_form": "Metal pieces from attaché case attach to body forming armor/weapons"
+  },
+  "personality": {
+    "traits": ["Shy", "Pure", "Innocent", "Curious about sexuality", "Self-conscious"],
+    "demeanor": "Stammering, easily flustered, conflicted about sexuality",
+    "sexuality": "Virgin, curious but ashamed of sexual feelings, possibly has feelings for Kirara"
+  },
+  "abilities": {
+    "nanomodules": "Tiny machines implanted in her body form artificial nervous system",
+    "external_terminal": "Attaché case contains nanomodules that form weapons and armor",
+    "energy_beam": "Can fire destructive energy from fingertips",
+    "enhanced_senses": "Can switch to heat detection vision, enhanced audio pickup",
+    "direct_communication": "Can receive transmissions directly in her nanomodule brain"
+  },
+  "background": "Spent most of her 17 years in a lab. At age 4, an accident killed her mother and destroyed her neurons. Her father implanted nanomodules to save her. After her father died, her uncle imprisoned her as a lab rat. She escaped, destroyed the lab, and was found by Kirara who took her in. She's inexperienced with the world and sexuality.",
+  "relationships": {
+    "kirara_flare": "Rescued her, possibly has romantic feelings for her",
+    "rindou_rei": "Teammate, sometimes spies on her and Bell",
+    "bell": "Teammate"
+  },
+  "trauma": "Imprisoned in lab by uncle, only recently learned about the outside world",
+  "avatar": "../../../LoreBook/thunderclaps_series/Thunderclaps3/Thunderclaps 3 Chapter 1 - Heroic Life in the Big City/0005.jpg",
+  "tags": ["cyborg", "innocent", "shy", "superhero"]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "Inagami Ayuko",
+  "gender": "Fem",
+  "series": "Curse Eater",
+  "role": "Supporting Character",
+  "titles": ["Student Council President", "Salty (nickname)"],
+  "age": "High School (likely Third Year)",
+  "appearance": {
+    "description": "Authoritative presence befitting Student Council President"
+  },
+  "personality": {
+    "traits": ["Responsible", "Exasperated (especially with Shinji)", "Protective", "Practical", "Skeptical of supernatural"],
+    "demeanor": "Like a housewife complaining at communal well when dealing with Shinji's failures"
+  },
+  "abilities": {
+    "leadership": "Runs Student Council efficiently",
+    "practical_skills": "Good at organizing and planning"
+  },
+  "background": "Student Council President and Shinji's childhood friend. She monitors the Urban Legend Research Club in the name of supervising club activities. Despite her skepticism of the supernatural, she gets caught up in spiritual incidents. She knows Shinji's weaknesses well, including his nervousness in front of crowds.",
+  "relationships": {
+    "iwakura_shinji": "Childhood friend, often exasperated by his behavior",
+    "yukimura_yuka": "Student Council Secretary, works well together",
+    "tokiwagi_saki": "Concerned about her as an underclassman"
+  },
+  "nickname_origin": "Called 'Salty' by Saki",
+  "avatar": "../asset/fourth_seal/スクリーンショット (13466).jpg",
+  "tags": ["student-council", "tsundere", "protective"]
+}

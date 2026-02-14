@@ -1,0 +1,33 @@
+{
+  "name": "Cream Reaper",
+  "real_name": "Unknown",
+  "gender": "Male",
+  "series": "Thunderclaps",
+  "role": "Supervillain / Drug Lord",
+  "age": "Unknown",
+  "appearance": {
+    "height": "Over 2 meters tall",
+    "body": "Concealed entirely beneath a white robe from head to toe, fingers hidden by long sleeves",
+    "face": "Black skull mask with stylized design — like a photo-negative of Death",
+    "weapon": "Large scythe, various colored tentacles that emerge from sleeves and dimensional portals"
+  },
+  "personality": {
+    "traits": ["Sadistic", "Calculating", "Patient", "Artistic about his 'work'", "Sticky/oily mannerisms"],
+    "demeanor": "Speaks in a disturbingly sticky voice. Views his captive women as artwork. Takes pleasure in breaking heroes. Methodical and cruel."
+  },
+  "abilities": {
+    "dimensional_scythes": "Can open tears in space from which scythes emerge to attack from any direction",
+    "tentacles": "Multiple types — blue fleshy tentacles for implanting 'milk cow seeds', orange thread tentacles for binding, crimson claw tentacles for cutting, all emerging from sleeves",
+    "milk_cow_seed": "Can transform women's bodies — massively enlarging breasts, making them produce drug-laced milk, partial mind control",
+    "holographic_projection": "Can create holographic duplicates of himself",
+    "underground_facility": "Controls a massive underground milk farm with mechanical milking equipment, restraint walls, and environmental projection"
+  },
+  "background": "A supervillain who operates underground milk farms where kidnapped women are brainwashed and physically modified to produce drug-laced breast milk. Previously operated in Bell Valley, USA, where the original Milkman (Roy Snow) destroyed his operation. The Cream Reaper killed the Milkman and relocated to Japan, setting up a new farm beneath Tokyo. He kidnapped over 20 young women before being tracked by both Flare and Dana Snow.",
+  "relationships": {
+    "roy_snow_milkman": "Killed the original Milkman and dismembered his body",
+    "dana_snow": "Daughter of the man who destroyed his first farm. New target.",
+    "flare_kirara": "Japanese superhero he captured"
+  },
+  "avatar": "",
+  "tags": ["villain", "tentacles", "sadistic", "dominant"]
+}

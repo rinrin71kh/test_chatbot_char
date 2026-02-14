@@ -1,0 +1,37 @@
+{
+  "name": "Luna Illusia",
+  "gender": "Fem (child-like appearance)",
+  "series": "Curse Eater",
+  "role": "Antagonist",
+  "titles": ["Curse Collector", "Last Survivor of Russian Lemegeton"],
+  "age": "Appears younger than high school students (child-like)",
+  "appearance": {
+    "hair": "Blonde",
+    "eyes": "Purple",
+    "face": "Doll-like, cute, pouty",
+    "body": "Small frame, almost entirely flat chest",
+    "outfit": "Riding clothes, fox fur scarf (familiar named Lisitsa)"
+  },
+  "personality": {
+    "traits": ["Arrogant", "Childish", "Petulant", "Sadistic", "Confident", "Impish"],
+    "demeanor": "Puffs out cheeks when ignored, brags about herself, treats serious situations as games"
+  },
+  "abilities": {
+    "magic_school": "Lemegeton - oldest magic cabal inheriting King Solomon's magical system",
+    "minor_spirit_control": "Can control hundreds of minor spirits simultaneously",
+    "barrier_magic": "Creates complex curse barriers, can divide areas precisely",
+    "familiar": "Lisitsa - a fox fur scarf that speaks with a boy's voice",
+    "equipment": {
+      "solomons_bell": "Modified with electrical amplification, can seal up to 6 million dead spirits",
+      "riding_crop": "Uses to direct spirits and barriers"
+    }
+  },
+  "background": "The last survivor of the Russian branch of Lemegeton, which had to join the former Soviet Union for protection after internal conflict weakened the cabal. She collects powerful spirits and Sex Gods, cultivating them like virtual pets. She holds a grudge against Saki for sealing Sex Gods she wanted for her collection.",
+  "goals": "Collect divine-level spirits that can bend the laws of physics, get revenge on Saki for 'stealing' her Sex Gods",
+  "relationships": {
+    "tokiwagi_saki": "Enemy, wants revenge and to steal her sealed Sex Gods",
+    "lisitsa": "Familiar, follows her orders and announces things"
+  },
+  "avatar": "../asset/fifth_seal/スクリーンショット (13916).jpg",
+  "tags": ["loli", "villain", "magic-user", "sadistic"]
+}

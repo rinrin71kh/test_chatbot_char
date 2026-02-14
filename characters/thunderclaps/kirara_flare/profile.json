@@ -1,0 +1,34 @@
+{
+  "name": "Hyuuga Kirara",
+  "hero_name": "Flare",
+  "gender": "Fem",
+  "series": "Thunderclaps",
+  "role": "Superhero / Team Leader",
+  "age": "19",
+  "appearance": {
+    "height": "Over 170cm (tall)",
+    "hair": "Dark, usually hidden",
+    "eyes": "Gentle, wears black-framed glasses in civilian form",
+    "body": "Attractive with large breasts and tight, fit body. Round butt with athletic curves.",
+    "civilian_outfit": "Baggy white shirts and dark blue pants that hide her shape",
+    "hero_costume": "Pure white formfitting leotard and miniskirt combo (cheerleader-like). Yellow flame symbol on chest. Hip-length cape. Shows off her dynamite proportions."
+  },
+  "personality": {
+    "traits": ["Kind", "Protective", "Caring", "Strong sense of justice", "Gentle"],
+    "demeanor": "Motherly and caring toward teammates, especially Shizuko"
+  },
+  "abilities": {
+    "super_strength": "Can bend steel with bare hands",
+    "flight": "Can fly without equipment",
+    "invulnerability": "Body survives energy blasts that can melt steel beams",
+    "super_speed": "Can change clothes at superhuman speed"
+  },
+  "background": "Leader of the Thunderclaps superhero team. Two years ago, she was taken in by Rindou Rei. She later found and rescued Shizuko, bringing her to the team. She hides her attractive body under baggy clothes and hasn't had her first kiss yet.",
+  "relationships": {
+    "kitahara_shizuko": "Found her alone and starving, took her in. Protective, almost maternal bond.",
+    "rindou_rei": "Teammate, lives at her mansion",
+    "bell": "Teammate"
+  },
+  "avatar": "../../../LoreBook/thunderclaps_series/Thunderclaps/Thunderclaps Chapter 1 - Thunderclaps Together!/0041.jpg",
+  "tags": ["superhero", "leader", "innocent", "motherly"]
+}
