@@ -31,6 +31,7 @@ from rag import (
     save_memory, get_memories, delete_memory,
     get_relationship, update_relationship,
     save_lore_adaptation, get_lore_adaptations, delete_lore_adaptation,
+    source_exists,
 )
 
 # ---- CONFIG ----
@@ -184,8 +185,73 @@ def load_character_from_profile(profile_path: Path, char_folder: Path) -> List[t
     return results
 
 
+CHARACTER_CACHE_PATH = os.path.join(os.path.dirname(__file__), ".character_cache.json")
+
+
+def _get_characters_dir_mtime() -> float:
+    """Get the most recent modification time across all character files."""
+    char_dir = Path(CHARACTERS_PATH)
+    if not char_dir.exists():
+        return 0.0
+    latest = 0.0
+    for f in char_dir.rglob("*.json"):
+        mt = f.stat().st_mtime
+        if mt > latest:
+            latest = mt
+    return latest
+
+
+def _load_character_cache() -> bool:
+    """Try to load characters from cache. Returns True if cache was valid."""
+    try:
+        if not os.path.exists(CHARACTER_CACHE_PATH):
+            return False
+
+        with open(CHARACTER_CACHE_PATH, "r", encoding="utf-8") as f:
+            cache = json.load(f)
+
+        cached_mtime = cache.get("mtime", 0)
+        current_mtime = _get_characters_dir_mtime()
+
+        # Cache is stale if any file was modified after it was written
+        if current_mtime > cached_mtime:
+            return False
+
+        chars = cache.get("characters", {})
+        vids = cache.get("video_sources", {})
+        if not chars:
+            return False
+
+        CHARACTERS.update(chars)
+        VIDEO_SOURCES.update(vids)
+        print(f"[Characters] Loaded {len(chars)} characters from cache (fast)")
+        return True
+    except Exception as e:
+        print(f"[Characters] Cache load failed: {e}")
+        return False
+
+
+def _save_character_cache():
+    """Save current CHARACTERS and VIDEO_SOURCES to cache file."""
+    try:
+        cache = {
+            "mtime": time.time(),
+            "characters": CHARACTERS,
+            "video_sources": VIDEO_SOURCES,
+        }
+        with open(CHARACTER_CACHE_PATH, "w", encoding="utf-8") as f:
+            json.dump(cache, f, ensure_ascii=False)
+        print(f"[Characters] Cache saved ({len(CHARACTERS)} characters)")
+    except Exception as e:
+        print(f"[Characters] Cache save failed: {e}")
+
+
 def load_characters_from_folder():
-    """Load all characters from the characters folder."""
+    """Load all characters from the characters folder. Uses cache when possible."""
+    # Try cache first
+    if _load_character_cache():
+        return
+
     char_dir = Path(CHARACTERS_PATH)
     if not char_dir.exists():
         print(f"[Characters] Creating directory: {char_dir.absolute()}")
@@ -237,6 +303,8 @@ def load_characters_from_folder():
         print(f"[Characters] Loaded {len(loaded)} characters:")
         for item in loaded:
             print(f"  - {item}")
+        # Save to cache for next startup
+        _save_character_cache()
     else:
         print(f"[Characters] No characters found in {char_dir.absolute()}")
 
@@ -244,7 +312,7 @@ def load_characters_from_folder():
 def load_lorebook_series():
     """
     Load lorebook series that have their own folder structure.
-    Also ingests text content for RAG.
+    Skips re-ingestion if the source already exists in the DB (cache).
     """
     lorebook_dir = Path(LOREBOOK_PATH)
     if not lorebook_dir.exists():
@@ -252,6 +320,7 @@ def load_lorebook_series():
         return
 
     loaded_lore = []
+    skipped = 0
 
     # Scan for series folders (folders containing .txt files and possibly asset folders)
     for series_folder in lorebook_dir.iterdir():
@@ -261,16 +330,18 @@ def load_lorebook_series():
             # Load all .txt files in the series folder for RAG
             for txt_file in series_folder.glob("*.txt"):
                 try:
+                    source = f"lorebook:{series_name}/{txt_file.name}"
+                    base_id = series_name.replace("_series", "").replace("-", "_").lower()
+
+                    # Skip if already ingested
+                    if source_exists(base_id, source):
+                        skipped += 1
+                        continue
+
                     with open(txt_file, "r", encoding="utf-8", errors="ignore") as f:
                         text = f.read()
 
                     if text.strip():
-                        # Use series name as base character_id for lore
-                        # This allows all characters from this series to access the lore
-                        source = f"lorebook:{series_name}/{txt_file.name}"
-
-                        # Ingest for the series base ID
-                        base_id = series_name.replace("_series", "").replace("-", "_").lower()
                         n = ingest_text(base_id, text, source=source)
                         loaded_lore.append(f"{txt_file.name} -> {base_id} ({n} chunks)")
 
@@ -278,7 +349,8 @@ def load_lorebook_series():
                         for char_id, char_data in CHARACTERS.items():
                             char_series = char_data.get("series", "").lower().replace(" ", "_")
                             if base_id in char_series or char_series in base_id:
-                                ingest_text(char_id, text, source=source)
+                                if not source_exists(char_id, source):
+                                    ingest_text(char_id, text, source=source)
 
                 except Exception as e:
                     print(f"[Lorebook] Error loading {txt_file}: {e}")
@@ -289,20 +361,28 @@ def load_lorebook_series():
         character_id = filename.split("_")[0].lower()
 
         try:
+            source = f"lorebook:{txt_file.name}"
+
+            # Skip if already ingested
+            if source_exists(character_id, source):
+                skipped += 1
+                continue
+
             with open(txt_file, "r", encoding="utf-8", errors="ignore") as f:
                 text = f.read()
 
             if text.strip():
-                source = f"lorebook:{txt_file.name}"
                 n = ingest_text(character_id, text, source=source)
                 loaded_lore.append(f"{txt_file.name} -> {character_id} ({n} chunks)")
         except Exception as e:
             print(f"[Lorebook] Error loading {txt_file}: {e}")
 
     if loaded_lore:
-        print(f"[Lorebook] Loaded {len(loaded_lore)} lore files:")
+        print(f"[Lorebook] Ingested {len(loaded_lore)} NEW lore files:")
         for item in loaded_lore:
             print(f"  - {item}")
+    if skipped:
+        print(f"[Lorebook] Skipped {skipped} already-ingested lore files (cached)")
 
 
 def load_video_sources(character_id: str = None):
@@ -359,11 +439,16 @@ if lorebook_path.exists():
 @app.on_event("startup")
 async def startup_event():
     """Load characters and lorebook files when server starts."""
+    t0 = time.time()
     print("[Startup] Loading characters from folder...")
     load_characters_from_folder()
+    t1 = time.time()
+    print(f"[Startup] Characters loaded in {t1 - t0:.2f}s")
     print("[Startup] Loading lorebook files...")
     load_lorebook_series()
-    print(f"[Startup] Ready! {len(CHARACTERS)} characters loaded.")
+    t2 = time.time()
+    print(f"[Startup] Lorebook loaded in {t2 - t1:.2f}s")
+    print(f"[Startup] Ready! {len(CHARACTERS)} characters loaded. Total startup: {t2 - t0:.2f}s")
 
 
 # in-memory session store

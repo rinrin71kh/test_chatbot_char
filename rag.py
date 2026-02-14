@@ -149,6 +149,7 @@ def init_db():
         )
     """)
     cur.execute("CREATE INDEX IF NOT EXISTS idx_chunks_character ON chunks(character_id)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_chunks_char_source ON chunks(character_id, source)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_chat_session_char ON chat_messages(session_id, character_id)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_variants_parent ON response_variants(parent_user_msg_id)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_memories_char ON character_memories(character_id)")
@@ -231,6 +232,21 @@ def ollama_chat(messages: List[Dict[str, str]]) -> str:
     )
     r.raise_for_status()
     return r.json()["message"]["content"]
+
+# ------------- SOURCE CHECK (CACHE) -------------
+def source_exists(character_id: str, source: str) -> bool:
+    """Check if chunks with this character_id + source already exist in the DB.
+    Used to skip re-ingestion on startup — avoids expensive Ollama embed calls."""
+    conn = _db()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT 1 FROM chunks WHERE character_id = ? AND source = ? LIMIT 1",
+        (character_id, source),
+    )
+    exists = cur.fetchone() is not None
+    conn.close()
+    return exists
+
 
 # ------------- INGEST -------------
 def ingest_text(character_id: str, text: str, source: str = "manual") -> int:
