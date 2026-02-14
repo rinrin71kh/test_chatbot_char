@@ -15,7 +15,9 @@ const {
   readerChapterIndex,
   readerImages,
   showReader,
+  chapterSortAsc,
   displayItems,
+  sortedChapters,
   loadAll,
   openSeries,
   openCharacterLore,
@@ -26,6 +28,7 @@ const {
   goBack,
   navigateChapter,
   getAvatarUrl,
+  toggleChapterSort,
 } = useLorebook();
 
 onMounted(() => {
@@ -130,10 +133,15 @@ function formatContent(text: string): string {
         </button>
         <h2 class="section-title">{{ selectedSeries.name }}</h2>
         <span class="chapter-count">{{ selectedSeries.chapter_count }} chapters</span>
+        <button class="sort-toggle-btn" @click="toggleChapterSort" :title="chapterSortAsc ? 'Sorted ascending' : 'Sorted descending'">
+          {{ chapterSortAsc ? '1-N' : 'N-1' }}
+          <svg v-if="chapterSortAsc" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 14l5-5 5 5z"/></svg>
+          <svg v-else viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
       </header>
       <div class="chapter-list">
         <div
-          v-for="(ch, idx) in selectedSeries.chapters"
+          v-for="(ch, idx) in sortedChapters"
           :key="ch.path"
           class="chapter-item"
           @click="readChapter(ch, idx)"
@@ -600,6 +608,28 @@ function formatContent(text: string): string {
   background: #1b1b2e;
   padding: 4px 12px;
   border-radius: 12px;
+}
+
+.sort-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid #2a2a3a;
+  background: #1a1a24;
+  color: #8b8b9f;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  margin-left: auto;
+}
+
+.sort-toggle-btn:hover {
+  background: #2a2a3a;
+  color: #e4e4eb;
+  border-color: #8b5cf6;
 }
 
 .chapter-list {

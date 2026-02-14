@@ -1,4 +1,4 @@
-import { activePersona, chatSettings, pinnedMessageIds } from "../store";
+import { activePersona, chatSettings, pinnedMessageIds, nsfwMode } from "../store";
 
 export function getPersonaPayload() {
   const p = activePersona.value;
@@ -22,5 +22,6 @@ export function getSettingsPayload() {
     nsfw_level: s.nsfwLevel,
     perspective: s.perspective,
     pinned_message_ids: pinned.length > 0 ? pinned : undefined,
+    sfw_mode: !nsfwMode.value,
   };
 }

@@ -5,15 +5,36 @@ export const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8001";
 // ---- App state ----
 export const currentView = ref<"dashboard" | "chat" | "lorebook">("dashboard");
 
-// ---- NSFW Mode (unlocked via #/18 in URL) ----
+// ---- NSFW Mode (unlocked via #/18 in URL or toggle button) ----
 export const nsfwMode = ref(false);
 
-export function initNsfwMode() {
+function checkNsfwHash(): boolean {
   const hash = window.location.hash;
-  nsfwMode.value = hash.includes("/18");
+  // Match #/18, #18, or any hash containing /18
+  return hash === "#/18" || hash === "#18" || hash.includes("/18");
+}
+
+export function initNsfwMode() {
+  nsfwMode.value = checkNsfwHash();
   window.addEventListener("hashchange", () => {
-    nsfwMode.value = window.location.hash.includes("/18");
+    nsfwMode.value = checkNsfwHash();
   });
+  // Also check after a short delay (in case hash loads late)
+  setTimeout(() => {
+    nsfwMode.value = checkNsfwHash();
+  }, 100);
+}
+
+export function toggleNsfwMode() {
+  if (nsfwMode.value) {
+    // Switch to SFW
+    window.location.hash = "";
+    nsfwMode.value = false;
+  } else {
+    // Switch to NSFW
+    window.location.hash = "/18";
+    nsfwMode.value = true;
+  }
 }
 
 // ---- Character state ----
@@ -199,9 +220,15 @@ export const activePersona = computed(() => {
   return personas.value.find((p: any) => p.id === activePersonaId.value) || null;
 });
 
+// Characters visible in current mode (before search/tag filters)
+const modeCharacters = computed(() => {
+  if (nsfwMode.value) return characters.value;
+  return characters.value.filter((c: any) => !(c.tags || []).includes("nsfw"));
+});
+
 export const charactersBySeries = computed(() => {
   const groups: Record<string, any[]> = {};
-  for (const c of characters.value) {
+  for (const c of modeCharacters.value) {
     const series = c.series || "Other";
     if (!groups[series]) groups[series] = [];
     groups[series].push(c);
@@ -209,12 +236,19 @@ export const charactersBySeries = computed(() => {
   return groups;
 });
 
-export const filteredCharacters = computed(() => {
-  let list = characters.value;
-  // In SFW mode, hide characters tagged "nsfw"
-  if (!nsfwMode.value) {
-    list = list.filter((c: any) => !(c.tags || []).includes("nsfw"));
+// Tags derived only from characters visible in current mode
+export const filteredTags = computed(() => {
+  const tagSet = new Set<string>();
+  for (const c of modeCharacters.value) {
+    for (const t of c.tags || []) {
+      tagSet.add(t);
+    }
   }
+  return [...tagSet].sort();
+});
+
+export const filteredCharacters = computed(() => {
+  let list = modeCharacters.value;
   if (activeTags.value.length > 0) {
     list = list.filter((c: any) =>
       (c.tags || []).some((t: string) => activeTags.value.includes(t))

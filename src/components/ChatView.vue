@@ -95,11 +95,14 @@ const moodBgColor = computed(() => {
   flex-direction: column;
   background: #0a0a0f;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   position: relative;
 }
 
 .messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 24px;
   display: flex;

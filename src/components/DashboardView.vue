@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   searchQuery,
-  allTags,
+  filteredTags,
   activeTags,
   filteredCharacters,
   activePersona,
@@ -39,7 +39,6 @@ function getPersonaAvatar(): { type: "emoji" | "image"; value: string } | null {
         </div>
         <div class="header-actions">
           <button
-            v-if="nsfwMode"
             class="action-btn"
             @click="openLorebook"
             title="Browse lorebook"
@@ -106,7 +105,7 @@ function getPersonaAvatar(): { type: "emoji" | "image"; value: string } | null {
         All
       </button>
       <button
-        v-for="tag in allTags"
+        v-for="tag in filteredTags"
         :key="tag"
         class="tag-chip"
         :class="{ active: activeTags.includes(tag) }"
@@ -141,7 +140,7 @@ function getPersonaAvatar(): { type: "emoji" | "image"; value: string } | null {
           <div class="dash-card-series">{{ c.series }}</div>
           <div v-if="c.title" class="dash-card-title">{{ c.title }}</div>
           <div class="dash-card-tags">
-            <span v-for="tag in c.tags || []" :key="tag" class="dash-tag">{{
+            <span v-for="tag in (c.tags || [])" :key="tag" class="dash-tag">{{
               tag
             }}</span>
           </div>
@@ -483,5 +482,95 @@ function getPersonaAvatar(): { type: "emoji" | "image"; value: string } | null {
 
 .dashboard::-webkit-scrollbar-thumb:hover {
   background: #3a3a4a;
+}
+
+/* ===== SFW DramaRealm Theme Overrides ===== */
+.app.sfw .dashboard {
+  background: transparent;
+}
+
+.app.sfw .search-input {
+  background: #131b2e;
+  border-color: #1e3050;
+  color: #d8e2f0;
+}
+
+.app.sfw .search-input:focus {
+  border-color: #3b82f6;
+}
+
+.app.sfw .search-input::placeholder {
+  color: #506580;
+}
+
+.app.sfw .search-icon {
+  color: #506580;
+}
+
+.app.sfw .tag-chip {
+  background: #131b2e;
+  border-color: #1e3050;
+  color: #7a95b8;
+}
+
+.app.sfw .tag-chip:hover {
+  background: #1a2540;
+  color: #a8c4e0;
+}
+
+.app.sfw .tag-chip.active {
+  background: linear-gradient(135deg, #1d4ed8, #0891b2);
+  border-color: #3b82f6;
+  color: white;
+}
+
+.app.sfw .dash-card {
+  background: #111827;
+  border-color: #1e3050;
+}
+
+.app.sfw .dash-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+}
+
+.app.sfw .dash-card-avatar {
+  background: linear-gradient(135deg, #0f1d36, #162544);
+}
+
+.app.sfw .dash-avatar-letter {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.app.sfw .dash-card-series {
+  color: #3b82f6;
+}
+
+.app.sfw .dash-tag {
+  background: #0f1d36;
+  color: #60a5fa;
+  border-color: #1e3a5f;
+}
+
+.app.sfw .action-btn {
+  background: #131b2e;
+  border-color: #1e3050;
+  color: #a8c4e0;
+}
+
+.app.sfw .action-btn:hover {
+  background: #1a2540;
+  border-color: #3b82f6;
+}
+
+.app.sfw .dash-subtitle {
+  color: #607890;
+}
+
+.app.sfw .dash-empty {
+  color: #506580;
 }
 </style>

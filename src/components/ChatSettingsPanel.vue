@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watch } from "vue";
-import { chatSettings, showSettingsPanel } from "../store";
+import { chatSettings, showSettingsPanel, nsfwMode } from "../store";
 
 // Auto-save settings to localStorage
 watch(chatSettings, (val) => {
@@ -88,8 +88,8 @@ watch(chatSettings, (val) => {
         </div>
       </div>
 
-      <!-- NSFW Level -->
-      <div class="setting-group">
+      <!-- NSFW Level (hidden in SFW mode) -->
+      <div v-if="nsfwMode" class="setting-group">
         <label class="setting-label">NSFW Level</label>
         <div class="toggle-group">
           <button

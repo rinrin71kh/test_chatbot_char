@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import { API } from "../store";
+import { API, nsfwMode } from "../store";
 
 // ---- Types ----
 export interface LorebookChapter {
@@ -16,6 +16,7 @@ export interface LorebookSeries {
   cover: string;
   chapter_count: number;
   chapters: LorebookChapter[];
+  nsfw?: boolean;
 }
 
 export interface LorebookCharacter {
@@ -50,6 +51,8 @@ const searchQuery = ref("");
 const selectedSeries = ref<LorebookSeries | null>(null);
 const selectedCharacter = ref<LorebookCharacter | null>(null);
 const characterLore = ref<CharacterLore | null>(null);
+const chapterSortAsc = ref(true);
+const savingToLorebook = ref(false);
 
 // Reader state
 const readerContent = ref("");
@@ -58,11 +61,22 @@ const readerChapterIndex = ref(0);
 const readerImages = ref<string[]>([]);
 const showReader = ref(false);
 
+// ---- Mode-filtered (SFW/NSFW) ----
+const modeSeries = computed(() => {
+  if (nsfwMode.value) return series.value;
+  return series.value.filter((s) => !s.nsfw);
+});
+
+const modeCharacters = computed(() => {
+  if (nsfwMode.value) return characters.value;
+  return characters.value.filter((c) => !(c.tags || []).includes("nsfw"));
+});
+
 // ---- Computed ----
 const filteredSeries = computed(() => {
   const q = searchQuery.value.trim().toLowerCase();
-  if (!q) return series.value;
-  return series.value.filter(
+  if (!q) return modeSeries.value;
+  return modeSeries.value.filter(
     (s) =>
       s.name.toLowerCase().includes(q) ||
       s.id.toLowerCase().includes(q) ||
@@ -72,8 +86,8 @@ const filteredSeries = computed(() => {
 
 const filteredCharacters = computed(() => {
   const q = searchQuery.value.trim().toLowerCase();
-  if (!q) return characters.value;
-  return characters.value.filter(
+  if (!q) return modeCharacters.value;
+  return modeCharacters.value.filter(
     (c) =>
       c.name.toLowerCase().includes(q) ||
       c.series.toLowerCase().includes(q) ||
@@ -191,6 +205,51 @@ function readScenario(scenario: { name: string; title: string; greeting: string;
   showReader.value = true;
 }
 
+const sortedChapters = computed(() => {
+  if (!selectedSeries.value) return [];
+  const chs = [...selectedSeries.value.chapters];
+  if (!chapterSortAsc.value) chs.reverse();
+  return chs;
+});
+
+function toggleChapterSort() {
+  chapterSortAsc.value = !chapterSortAsc.value;
+}
+
+async function saveChapter(seriesName: string, chapterTitle: string, content: string): Promise<boolean> {
+  savingToLorebook.value = true;
+  try {
+    const r = await fetch(`${API}/lorebook/save-chapter`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        series_name: seriesName,
+        chapter_title: chapterTitle,
+        content: content,
+      }),
+    });
+    if (!r.ok) throw new Error("Failed to save");
+    // Refresh series data
+    await loadSeries();
+    return true;
+  } catch (e) {
+    console.error("Failed to save chapter:", e);
+    return false;
+  } finally {
+    savingToLorebook.value = false;
+  }
+}
+
+async function loadUserSeries(): Promise<string[]> {
+  try {
+    const r = await fetch(`${API}/lorebook/user-series`);
+    const data = await r.json();
+    return data.series || [];
+  } catch {
+    return [];
+  }
+}
+
 function closeReader() {
   showReader.value = false;
 }
@@ -240,10 +299,13 @@ export function useLorebook() {
     readerChapterIndex,
     readerImages,
     showReader,
+    chapterSortAsc,
+    savingToLorebook,
     // Computed
     filteredSeries,
     filteredCharacters,
     displayItems,
+    sortedChapters,
     // Actions
     loadAll,
     openSeries,
@@ -255,5 +317,8 @@ export function useLorebook() {
     goBack,
     navigateChapter,
     getAvatarUrl,
+    toggleChapterSort,
+    saveChapter,
+    loadUserSeries,
   };
 }

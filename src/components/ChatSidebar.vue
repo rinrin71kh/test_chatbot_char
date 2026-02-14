@@ -66,7 +66,7 @@ async function handleIngestUrl() {
         </svg>
         Dashboard
       </button>
-      <button v-if="nsfwMode" class="btn btn-back btn-lorebook" @click="currentView = 'lorebook'">
+      <button class="btn btn-back btn-lorebook" @click="currentView = 'lorebook'">
         &#128218; Lorebook
       </button>
     </div>

@@ -13,6 +13,7 @@ import {
 } from "../store";
 import { useChat } from "../composables/useChat";
 import { useCharacters } from "../composables/useCharacters";
+import { useLorebook } from "../composables/useLorebook";
 
 const props = defineProps({
   msg: { type: Object, required: true },
@@ -33,6 +34,7 @@ const {
   formatMessage,
   formatTimestamp,
 } = useChat();
+const { saveChapter, loadUserSeries, savingToLorebook } = useLorebook();
 
 const showActions = ref(false);
 const copied = ref(false);
@@ -90,6 +92,48 @@ function togglePin() {
 const reaction = ref(null);
 function setReaction(type) {
   reaction.value = reaction.value === type ? null : type;
+}
+
+// Save to Lorebook
+const isWritingAssistant = computed(() => {
+  const tags = currentCharacter.value?.tags || [];
+  return tags.includes("writing assistant");
+});
+const showSaveForm = ref(false);
+const saveSeriesName = ref("");
+const saveChapterTitle = ref("");
+const existingSeries = ref([]);
+const saveFeedback = ref("");
+
+async function openSaveForm() {
+  showSaveForm.value = true;
+  saveFeedback.value = "";
+  existingSeries.value = await loadUserSeries();
+}
+
+function closeSaveForm() {
+  showSaveForm.value = false;
+  saveSeriesName.value = "";
+  saveChapterTitle.value = "";
+  saveFeedback.value = "";
+}
+
+async function doSaveChapter() {
+  if (!saveSeriesName.value.trim() || !saveChapterTitle.value.trim()) {
+    saveFeedback.value = "Please fill in both fields";
+    return;
+  }
+  const ok = await saveChapter(
+    saveSeriesName.value.trim(),
+    saveChapterTitle.value.trim(),
+    props.msg.content
+  );
+  if (ok) {
+    saveFeedback.value = "Saved!";
+    setTimeout(closeSaveForm, 1500);
+  } else {
+    saveFeedback.value = "Save failed";
+  }
 }
 </script>
 
@@ -245,6 +289,20 @@ function setReaction(type) {
         </svg>
       </button>
 
+      <!-- Save to Lorebook (writing assistants only) -->
+      <button
+        v-if="msg.role === 'assistant' && isWritingAssistant"
+        class="action-btn save-lb"
+        @click="openSaveForm"
+        title="Save to Lorebook"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+      </button>
+
       <!-- Reactions -->
       <button
         class="action-btn"
@@ -277,6 +335,39 @@ function setReaction(type) {
           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
         </svg>
       </button>
+    </div>
+
+    <!-- Save to Lorebook inline form -->
+    <div v-if="showSaveForm" class="save-lb-form">
+      <div class="save-lb-header">
+        <span>Save to Lorebook</span>
+        <button class="save-lb-close" @click="closeSaveForm">&times;</button>
+      </div>
+      <div class="save-lb-fields">
+        <input
+          v-model="saveSeriesName"
+          type="text"
+          placeholder="Series name (e.g. My Novel)"
+          class="save-lb-input"
+          list="series-list"
+        />
+        <datalist id="series-list">
+          <option v-for="s in existingSeries" :key="s" :value="s" />
+        </datalist>
+        <input
+          v-model="saveChapterTitle"
+          type="text"
+          placeholder="Chapter title (e.g. Prologue)"
+          class="save-lb-input"
+          @keydown.enter="doSaveChapter"
+        />
+      </div>
+      <div class="save-lb-actions">
+        <span v-if="saveFeedback" class="save-lb-feedback" :class="{ error: saveFeedback.includes('fail') || saveFeedback.includes('fill') }">{{ saveFeedback }}</span>
+        <button class="save-lb-btn" @click="doSaveChapter" :disabled="savingToLorebook">
+          {{ savingToLorebook ? 'Saving...' : 'Save' }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -573,5 +664,111 @@ function setReaction(type) {
 
 .edit-btn.cancel:hover {
   background: #3a3a4a;
+}
+
+/* Save to Lorebook */
+.action-btn.save-lb:hover {
+  color: #22c55e;
+  background: #0a2a15;
+}
+
+.save-lb-form {
+  margin-top: 8px;
+  background: #111118;
+  border: 1px solid #2a2a3a;
+  border-radius: 12px;
+  padding: 12px 14px;
+  max-width: 340px;
+  animation: fadeIn 0.15s ease;
+}
+
+.save-lb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #c4c4d4;
+}
+
+.save-lb-close {
+  background: none;
+  border: none;
+  color: #6b6b80;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.save-lb-close:hover {
+  color: #e4e4eb;
+}
+
+.save-lb-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-lb-input {
+  width: 100%;
+  background: #1a1a24;
+  border: 1px solid #2a2a3a;
+  color: #e4e4eb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.save-lb-input:focus {
+  border-color: #8b5cf6;
+}
+
+.save-lb-input::placeholder {
+  color: #4a4a5a;
+}
+
+.save-lb-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.save-lb-feedback {
+  font-size: 12px;
+  color: #22c55e;
+}
+
+.save-lb-feedback.error {
+  color: #f87171;
+}
+
+.save-lb-btn {
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+  margin-left: auto;
+}
+
+.save-lb-btn:hover {
+  opacity: 0.9;
+}
+
+.save-lb-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
